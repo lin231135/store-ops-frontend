@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build: .
+    container_name: store_ops_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    networks:
+      - frontend_network
+
+networks:
+  frontend_network:
+    driver: bridge
