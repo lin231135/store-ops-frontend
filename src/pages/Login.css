@@ -1,0 +1,41 @@
+.fondo-animado {
+    background: linear-gradient(-45deg, #74ebd5, #ACB6E5, #a18cd1, #fbc2eb);
+    background-size: 400% 400%;
+    animation: animacionFondo 15s ease infinite;
+  }
+  
+  @keyframes animacionFondo {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+
+
+.bg-image-vertical {
+    position: relative;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: auto 100%;
+  }
+  
+  @media (min-width: 1025px) {
+    .h-custom-2 {
+      height: 100%;
+    }
+  }
+
+
+.form-control:focus {
+    border-color: #0dcaf0;
+    box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.25);
+  }
+    
+
