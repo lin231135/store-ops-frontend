@@ -55,8 +55,8 @@ const Register = () => {
                 </span>
                 <select className="form-select">
                   <option value="">Selecciona el tipo de usuario</option>
-                  <option value="gerente">Gerente</option>
                   <option value="admin">Administrador</option>
+                  <option value="gerente">Gerente</option>
                   <option value="cajero">Cajero</option>
                   <option value="bodeguero">Bodeguero</option>
                 </select>
@@ -90,7 +90,7 @@ const Register = () => {
 
           <div className="mt-4 text-center">
             <button type="submit" className="button">Registrar Usuario</button>
-            <a href='./LoginPage'>Regresar a Login</a>
+            <a href='./Login'>Regresar a Login</a>
           </div>
         </form>
       </div>

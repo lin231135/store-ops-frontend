@@ -1,0 +1,12 @@
+.cajero-container {
+    background-color: #f8f9fa;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cajero-title {
+    color: #007bff;
+    font-weight: bold;
+  }
+  

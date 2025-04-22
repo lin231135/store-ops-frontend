@@ -5,6 +5,10 @@ import LoginPage from "../../pages/LoginPage";
 import Dashboard from "../../pages/Dashboard";
 import PrivateRoute from "../PrivateRoute";
 import Register from "../../pages/RegisterPage";
+import AdmPage from "../../pages/AdmPage";
+import GerentePage from "../../pages/GerentePage";
+import CajeroPage from "../../pages/CajeroPage";
+import BodegueroPage from "../../pages/BodegueroPage";
 
 const App = () => {
   return (
@@ -16,6 +20,10 @@ const App = () => {
           <NavLink className="nav-link" to="/login">Login</NavLink>
           <NavLink className="nav-link" to="/dashboard">Dashboard</NavLink>
           <NavLink className="nav-link" to="/register">Registrar</NavLink>
+          <NavLink className="nav-link" to="/adm">Administrador</NavLink>
+          <NavLink className="nav-link" to="/gerente">Gerente</NavLink>
+          <NavLink className="nav-link" to="/cajero">Cajero</NavLink>
+          <NavLink className="nav-link" to="/bodeguero">Bodeguero</NavLink>
         </div>
       </nav>
 
@@ -23,6 +31,12 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/adm" element={<AdmPage />} />
+        <Route path="/gerente" element={<GerentePage />} />
+        <Route path="/cajero" element={<CajeroPage />} />
+        <Route path="/bodeguero" element={<BodegueroPage />} />
+        
+
         {/* Ruta protegida */}
         <Route path="/dashboard" element={
           <PrivateRoute>
