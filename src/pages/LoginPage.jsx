@@ -59,7 +59,7 @@ const LoginPage = () => {
                     </div>
 
                     <p className="small text-center mb-0">
-                        <a href="#" className="text-muted">¿Olvidaste tu contraseña?</a>
+                        <a href='#' className="text-muted">¿Olvidaste tu contraseña?</a>
                     </p>
                     </form>
                 </div>
