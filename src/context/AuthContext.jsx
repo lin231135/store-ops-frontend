@@ -1,24 +1,32 @@
-// Este archivo define el contexto de autenticación (login/logout)
-// para poder usarlo desde cualquier parte de la app.
-
 import { createContext, useState, useContext } from "react";
 
-// Creamos el contexto
 const AuthContext = createContext();
 
-// Proveedor del contexto que maneja si el usuario está autenticado
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // false por defecto
+  const [auth, setAuth] = useState(() => {
+    const token = localStorage.getItem("token");
+    const name = localStorage.getItem("name");
+    const role = localStorage.getItem("role");
+    return token ? { token, name, role } : null;
+  });
 
-  const login = () => setIsAuthenticated(true); // Llama esto al iniciar sesión
-  const logout = () => setIsAuthenticated(false); // Llama esto para cerrar sesión
+  const login = ({ token, name, role }) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("name", name);
+    localStorage.setItem("role", role);
+    setAuth({ token, name, role });
+  };
+
+  const logout = () => {
+    localStorage.clear();
+    setAuth(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ auth, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Hook personalizado para acceder fácilmente al contexto
 export const useAuth = () => useContext(AuthContext);
