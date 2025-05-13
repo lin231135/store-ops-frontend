@@ -1,0 +1,89 @@
+.calendario-container {
+    padding: 2rem 4rem;
+    min-height: 100vh;
+    background-color: #f9fafb;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .calendario-toolbar {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .toolbar-button,
+  .toolbar-icon {
+    background-color: #f3f4f6;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  
+  .toolbar-icon {
+    font-size: 1.2rem;
+    padding: 0.6rem;
+  }
+  
+  .date-range {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #f3f4f6;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+  }
+  
+  .arrow {
+    border: none;
+    background: transparent;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+  
+  .publicar {
+    background-color: #e5e7eb;
+    color: #9ca3af;
+    font-weight: bold;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    border: none;
+  }
+  
+  .right-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .calendario-empty {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 4rem;
+    text-align: center;
+    margin-top: 4rem;
+  }
+  
+  .calendario-icon {
+    font-size: 3rem;
+    color: #9ca3af;
+    margin-bottom: 1rem;
+  }
+  
+  .blue-button {
+    margin-top: 1rem;
+    background-color: #007bff;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
