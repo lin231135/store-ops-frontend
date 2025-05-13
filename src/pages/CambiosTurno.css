@@ -1,0 +1,68 @@
+.turno-container {
+  padding: 2rem 4rem;
+  background-color: #fff;
+  min-height: 100vh;
+  font-family: sans-serif;
+}
+
+.turno-titulo {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.turno-filtros {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+}
+
+.filtro-btn {
+  background-color: #f3f4f6;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.turno-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+}
+
+.turno-icono {
+  font-size: 2.5rem;
+  margin-right: 1rem;
+}
+
+.turno-texto {
+  flex: 1;
+}
+
+.ajustes-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.turno-vacio {
+  text-align: center;
+  padding: 3rem;
+  background-color: #fafafa;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.turno-calendario {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
