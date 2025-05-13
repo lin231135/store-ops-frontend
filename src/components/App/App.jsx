@@ -11,6 +11,7 @@ import CajeroPage from "../../pages/CajeroPage";
 import BodegueroPage from "../../pages/BodegueroPage";
 import Empleados from "../../pages/empleado";
 import Calendario from "../../pages/calendario";
+import Inventario from "../../pages/Inventario";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           <NavLink className="nav-link" to="/bodeguero">Bodeguero</NavLink>
           <NavLink className="nav-link" to="/empleado">Empleados</NavLink>
           <NavLink className="nav-link" to="/calendario">Calendario</NavLink>
+          <NavLink className="nav-link" to="/inventario">Inventario</NavLink>
         </div>
       </nav>
 
@@ -41,6 +43,7 @@ const App = () => {
         <Route path="/bodeguero" element={<BodegueroPage />} />
         <Route path="/empleado" element={<Empleados />} />
         <Route path="/calendario" element={<Calendario />} />
+        <Route path="/inventario" element={<Inventario />} />
         
 
         {/* Ruta protegida */}
