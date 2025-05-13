@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import './App.css'
+import './Inventario.css'
 import { Pencil, Trash } from "lucide-react";
 
 
