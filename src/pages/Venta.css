@@ -1,0 +1,8 @@
+/* Puedes personalizar aquí si quieres ajustar colores, márgenes o responsividad */
+.card img {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .list-group-item {
+    align-items: center;
+  }
