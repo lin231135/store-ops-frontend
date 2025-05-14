@@ -1,19 +1,15 @@
 // Este es el componente principal que define las rutas de la aplicación
 
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
-import LoginPage from "../../pages/LoginPage";
-import Dashboard from "../../pages/Dashboard";
-import PrivateRoute from "../PrivateRoute";
-import Register from "../../pages/RegisterPage";
-import AdmPage from "../../pages/AdmPage";
-import GerentePage from "../../pages/GerentePage";
-import CajeroPage from "../../pages/CajeroPage";
-import BodegueroPage from "../../pages/BodegueroPage";
-import Empleados from "../../pages/empleado";
-import Calendario from "../../pages/calendario";
-import Inventario from "../../pages/Inventario";
-import RegistroHoras from "../../pages/RegistroHoras";
-import CambiosTurno from "../../pages/CambiosTurno";
+import LoginPage from "../pages/LoginPage";
+import Dashboard from "../pages/Dashboard";
+import PrivateRoute from "../components/PrivateRoute";
+import Register from "../pages/RegisterPage";
+import Empleados from "../pages/empleado";
+import Calendario from "../pages/calendario";
+import Inventario from "../pages/Inventario";
+import RegistroHoras from "../pages/RegistroHoras";
+import CambiosTurno from "../pages/CambiosTurno";
 
 const App = () => {
   return (
@@ -25,10 +21,6 @@ const App = () => {
           <NavLink className="nav-link" to="/login">Login</NavLink>
           <NavLink className="nav-link" to="/dashboard">Dashboard</NavLink>
           <NavLink className="nav-link" to="/register">Registrar</NavLink>
-          <NavLink className="nav-link" to="/adm">Administrador</NavLink>
-          <NavLink className="nav-link" to="/gerente">Gerente</NavLink>
-          <NavLink className="nav-link" to="/cajero">Cajero</NavLink>
-          <NavLink className="nav-link" to="/bodeguero">Bodeguero</NavLink>
           <NavLink className="nav-link" to="/empleado">Empleados</NavLink>
           <NavLink className="nav-link" to="/calendario">Calendario</NavLink>
           <NavLink className="nav-link" to="/inventario">Inventario</NavLink>
@@ -42,16 +34,12 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/adm" element={<AdmPage />} />
-        <Route path="/gerente" element={<GerentePage />} />
-        <Route path="/cajero" element={<CajeroPage />} />
-        <Route path="/bodeguero" element={<BodegueroPage />} />
         <Route path="/empleado" element={<Empleados />} />
         <Route path="/calendario" element={<Calendario />} />
         <Route path="/inventario" element={<Inventario />} />
         <Route path="/registro-horas" element={<RegistroHoras />} />
         <Route path="/cambios-turno" element={<CambiosTurno />} />
-        
+
 
         {/* Ruta protegida */}
         <Route path="/dashboard" element={
@@ -59,7 +47,7 @@ const App = () => {
             <Dashboard />
           </PrivateRoute>
         } />
-         
+
         {/* Ruta por defecto */}
         <Route path="/" element={<h2 className="text-center mt-5">Inicio</h2>} />
       </Routes>
