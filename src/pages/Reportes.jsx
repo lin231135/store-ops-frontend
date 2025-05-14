@@ -6,6 +6,7 @@ import IncomeChart from '../components/IncomeChart';
 import RecentTransactions from '../components/RecentTransactions';
 import FinancialSummary from '../components/FinancialSummary';
 import DownloadReport from '../components/DownloadReport';
+import EmailAutomation from '../components/EmailAutomation';
 
 const Reportes = () => {
     return (
@@ -21,6 +22,7 @@ const Reportes = () => {
             </Row>
             <Row className="mb-4">
                 <Col md={6}><DownloadReport /></Col>
+                <Col md={6}><EmailAutomation /></Col>
             </Row>
             <Row>
                 <Col><RecentTransactions /></Col>
