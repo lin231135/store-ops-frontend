@@ -5,6 +5,7 @@ import ExpenseChart from '../components/ExpenseChart';
 import IncomeChart from '../components/IncomeChart';
 import RecentTransactions from '../components/RecentTransactions';
 import FinancialSummary from '../components/FinancialSummary';
+import DownloadReport from '../components/DownloadReport';
 
 const Reportes = () => {
     return (
@@ -17,6 +18,9 @@ const Reportes = () => {
             <Row className="mb-4">
                 <Col md={6}><IncomeChart /></Col>
                 <Col md={6}><ExpenseChart /></Col>
+            </Row>
+            <Row className="mb-4">
+                <Col md={6}><DownloadReport /></Col>
             </Row>
             <Row>
                 <Col><RecentTransactions /></Col>
