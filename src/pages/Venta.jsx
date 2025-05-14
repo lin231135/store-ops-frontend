@@ -17,18 +17,51 @@ const Venta = () => {
   const [busqueda, setBusqueda] = useState("");
   const [venta, setVenta] = useState([]);
 
-  // Filtra los productos según la búsqueda
+  // Filtrar productos
   const productosFiltrados = productosBase.filter((p) =>
     p.nombre.toLowerCase().includes(busqueda.toLowerCase())
   );
 
-  // Agrega producto al pedido
+  // Agregar producto a la venta
   const agregarProducto = (producto) => {
-    setVenta((prev) => [...prev, producto]);
+    setVenta((prev) => {
+      const index = prev.findIndex((item) => item.nombre === producto.nombre);
+      if (index >= 0) {
+        const updated = [...prev];
+        updated[index].cantidad += 1;
+        return updated;
+      } else {
+        return [...prev, { ...producto, cantidad: 1 }];
+      }
+    });
   };
 
-  // Calcula totales
-  const subtotal = venta.reduce((sum, p) => sum + p.precio, 0);
+  // Incrementar cantidad
+  const aumentar = (index) => {
+    const updated = [...venta];
+    updated[index].cantidad += 1;
+    setVenta(updated);
+  };
+
+  // Disminuir cantidad o eliminar si es 1
+  const disminuir = (index) => {
+    const updated = [...venta];
+    if (updated[index].cantidad === 1) {
+      updated.splice(index, 1);
+    } else {
+      updated[index].cantidad -= 1;
+    }
+    setVenta(updated);
+  };
+
+  // Eliminar producto directamente
+  const eliminar = (index) => {
+    const updated = [...venta];
+    updated.splice(index, 1);
+    setVenta(updated);
+  };
+
+  const subtotal = venta.reduce((sum, p) => sum + p.precio * p.cantidad, 0);
 
   return (
     <div className="container-fluid mt-4">
@@ -53,7 +86,7 @@ const Venta = () => {
             {productosFiltrados.map((p, idx) => (
               <div className="col-md-4 mb-4" key={idx}>
                 <div
-                  className="card h-100 cursor-pointer"
+                  className="card h-100"
                   style={{ cursor: "pointer" }}
                   onClick={() => agregarProducto(p)}
                 >
@@ -73,17 +106,22 @@ const Venta = () => {
           </div>
         </div>
 
-        {/* Panel derecho - Orden */}
+        {/* Panel derecho */}
         <div className="col-md-4 border-start ps-4">
           <h5>Venta nueva</h5>
           <ul className="list-group mb-3">
             {venta.map((p, i) => (
-              <li className="list-group-item d-flex justify-content-between" key={i}>
-                <div>
+              <li className="list-group-item d-flex justify-content-between align-items-center" key={i}>
+                <div style={{ flex: 1 }}>
                   <strong>{p.nombre}</strong>
-                  <p className="mb-0 text-muted">Fingido</p>
+                  <p className="mb-1 text-muted">Cantidad: {p.cantidad}</p>
+                  <p className="mb-0">${(p.precio * p.cantidad).toFixed(2)}</p>
                 </div>
-                <span>${p.precio.toFixed(2)}</span>
+                <div className="btn-group ms-2">
+                  <button className="btn btn-sm btn-outline-secondary" onClick={() => disminuir(i)}>-</button>
+                  <button className="btn btn-sm btn-outline-secondary" onClick={() => aumentar(i)}>+</button>
+                  <button className="btn btn-sm btn-outline-danger" onClick={() => eliminar(i)}>🗑️</button>
+                </div>
               </li>
             ))}
             {venta.length === 0 && (
