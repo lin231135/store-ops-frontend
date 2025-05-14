@@ -16,6 +16,9 @@ const productosBase = [
 const Venta = () => {
   const [busqueda, setBusqueda] = useState("");
   const [venta, setVenta] = useState([]);
+  const [showPagoConfirmacion, setShowPagoConfirmacion] = useState(false);
+  const [showPagoView, setShowPagoView] = useState(false);
+  const [nota, setNota] = useState("");
 
   const productosFiltrados = productosBase.filter((p) =>
     p.nombre.toLowerCase().includes(busqueda.toLowerCase())
@@ -61,10 +64,63 @@ const Venta = () => {
     return sum + precioFinal * p.cantidad;
   }, 0);
 
+  if (showPagoView) {
+    return (
+      <div className="container mt-5">
+        <h2 className="text-center">${subtotal.toFixed(2)}</h2>
+        <p className="text-center text-muted">Selecciona un tipo de pago a continuación</p>
+
+        <div className="d-flex justify-content-center gap-3 mb-3">
+          <button className="btn btn-outline-secondary">${subtotal.toFixed(2)}</button>
+          <button className="btn btn-outline-secondary">${(subtotal + 0.5).toFixed(2)}</button>
+          <button className="btn btn-outline-secondary">${(subtotal + 3.5).toFixed(2)}</button>
+          <button className="btn btn-outline-secondary">Personalizado</button>
+        </div>
+
+        <ul className="list-group">
+          <li className="list-group-item d-flex justify-content-between align-items-center">
+            <span><i className="bi bi-cash-stack me-2"></i>Efectivo</span>
+            <i className="bi bi-chevron-right"></i>
+          </li>
+          <li className="list-group-item d-flex justify-content-between align-items-center">
+            <span><i className="bi bi-credit-card me-2"></i>Tarjeta guardada</span>
+            <i className="bi bi-chevron-right"></i>
+          </li>
+          <li className="list-group-item d-flex justify-content-between align-items-center">
+            <span><i className="bi bi-gift me-2"></i>Tarjeta de regalo</span>
+            <i className="bi bi-chevron-right"></i>
+          </li>
+          <li className="list-group-item d-flex justify-content-between align-items-center">
+            <span><i className="bi bi-input-cursor-text me-2"></i>Ingreso manual de tarjeta</span>
+            <i className="bi bi-chevron-right"></i>
+          </li>
+        </ul>
+
+        <div className="mt-4 text-center">
+          <a href="#" onClick={(e) => { e.preventDefault(); alert("Funcionalidad no implementada aún."); }}>
+            Dividir importe
+          </a>
+        </div>
+
+        <div className="mt-4">
+          <label htmlFor="nota" className="form-label">Nota del pago o pedido:</label>
+          <textarea
+            id="nota"
+            className="form-control"
+            rows={3}
+            placeholder="Ej: Cliente pidió sin cebolla..."
+            value={nota}
+            onChange={(e) => setNota(e.target.value)}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container-fluid mt-4">
       <div className="row">
-        {/* Panel izquierdo */}
+        {/* Panel izquierdo con scroll interno */}
         <div className="col-md-8">
           <div className="mb-3 d-flex gap-3 align-items-center">
             <button className="btn btn-danger">Hamburguesas</button>
@@ -85,7 +141,7 @@ const Venta = () => {
             />
           </div>
 
-          <div className="row">
+          <div className="row overflow-auto" style={{ maxHeight: "70vh" }}>
             {productosFiltrados.map((p, idx) => (
               <div className="col-md-4 mb-4" key={idx}>
                 <div
@@ -101,13 +157,9 @@ const Venta = () => {
                   />
                   <div className="card-body text-center">
                     <h6 className="card-title">{p.nombre}</h6>
-                    <p className="card-text mb-0">
-                      ${p.precio.toFixed(2)}
-                    </p>
+                    <p className="card-text mb-0">${p.precio.toFixed(2)}</p>
                     {p.descuento && (
-                      <p className="text-danger mb-0">
-                        -{(p.precio * p.descuento).toFixed(2)} descuento
-                      </p>
+                      <p className="text-danger mb-0">-{(p.precio * p.descuento).toFixed(2)} descuento</p>
                     )}
                   </div>
                 </div>
@@ -124,10 +176,7 @@ const Venta = () => {
               const precioFinal = p.precio * (1 - (p.descuento || 0));
               const ahorroTotal = p.precio * p.cantidad - precioFinal * p.cantidad;
               return (
-                <li
-                  className="list-group-item d-flex justify-content-between align-items-center"
-                  key={i}
-                >
+                <li className="list-group-item d-flex justify-content-between align-items-center" key={i}>
                   <div style={{ flex: 1 }}>
                     <strong>{p.nombre}</strong>
                     <p className="mb-1 text-muted">Cantidad: {p.cantidad}</p>
@@ -167,10 +216,53 @@ const Venta = () => {
 
           <div className="d-grid gap-2">
             <button className="btn btn-success">Envíar a cocina</button>
-            <button className="btn btn-primary">Pagar</button>
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowPagoConfirmacion(true)}
+            >
+              Pagar
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Confirmación de pago */}
+      {showPagoConfirmacion && (
+        <div className="modal d-block" tabIndex="-1">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirmar pago</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowPagoConfirmacion(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <p>¿Deseas continuar al pago por <strong>${subtotal.toFixed(2)}</strong>?</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowPagoConfirmacion(false)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => {
+                    setShowPagoConfirmacion(false);
+                    setShowPagoView(true);
+                  }}
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
