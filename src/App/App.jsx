@@ -5,6 +5,7 @@ import LoginPage from "../pages/LoginPage";
 import Dashboard from "../pages/Dashboard";
 import PrivateRoute from "../components/PrivateRoute";
 import Register from "../pages/RegisterPage";
+import Reportes from "../pages/Reportes";
 import Empleados from "../pages/empleado";
 import Calendario from "../pages/calendario";
 import Inventario from "../pages/Inventario";
@@ -21,6 +22,7 @@ const App = () => {
           <NavLink className="nav-link" to="/login">Login</NavLink>
           <NavLink className="nav-link" to="/dashboard">Dashboard</NavLink>
           <NavLink className="nav-link" to="/register">Registrar</NavLink>
+          <NavLink className="nav-link" to="/reportes">Reportes</NavLink>
           <NavLink className="nav-link" to="/empleado">Empleados</NavLink>
           <NavLink className="nav-link" to="/calendario">Calendario</NavLink>
           <NavLink className="nav-link" to="/inventario">Inventario</NavLink>
@@ -34,6 +36,7 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/reportes" element={<Reportes />} />
         <Route path="/empleado" element={<Empleados />} />
         <Route path="/calendario" element={<Calendario />} />
         <Route path="/inventario" element={<Inventario />} />
