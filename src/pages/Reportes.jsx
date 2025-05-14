@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import BalanceCard from '../components/BalanceCard';
 import ExpenseChart from '../components/ExpenseChart';
 import IncomeChart from '../components/IncomeChart';
+import RecentTransactions from '../components/RecentTransactions';
 import FinancialSummary from '../components/FinancialSummary';
 
 const Reportes = () => {
@@ -16,6 +17,9 @@ const Reportes = () => {
             <Row className="mb-4">
                 <Col md={6}><IncomeChart /></Col>
                 <Col md={6}><ExpenseChart /></Col>
+            </Row>
+            <Row>
+                <Col><RecentTransactions /></Col>
             </Row>
         </Container>
     );
