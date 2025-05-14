@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Venta.css";
 
-const productos = [
+const productosBase = [
   { nombre: "La clásica", precio: 10.0, imagen: "/burgers/classic.jpg" },
   { nombre: "Hamburguesa con queso", precio: 11.0, imagen: "/burgers/cheese.jpg" },
   { nombre: "Doble tocino", precio: 14.0, imagen: "/burgers/bacon.jpg" },
@@ -14,22 +14,49 @@ const productos = [
 ];
 
 const Venta = () => {
+  const [busqueda, setBusqueda] = useState("");
+  const [venta, setVenta] = useState([]);
+
+  // Filtra los productos según la búsqueda
+  const productosFiltrados = productosBase.filter((p) =>
+    p.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
+  // Agrega producto al pedido
+  const agregarProducto = (producto) => {
+    setVenta((prev) => [...prev, producto]);
+  };
+
+  // Calcula totales
+  const subtotal = venta.reduce((sum, p) => sum + p.precio, 0);
+
   return (
     <div className="container-fluid mt-4">
       <div className="row">
         {/* Panel izquierdo */}
         <div className="col-md-8">
-          <div className="mb-3 d-flex gap-3">
+          <div className="mb-3 d-flex gap-3 align-items-center">
             <button className="btn btn-danger">Hamburguesas</button>
             <button className="btn btn-success">Complementos</button>
             <button className="btn btn-primary">Bebidas</button>
             <button className="btn btn-outline-success">10% de descuento</button>
+            <input
+              type="text"
+              className="form-control w-50 ms-auto"
+              placeholder="Buscar producto..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+            />
           </div>
 
           <div className="row">
-            {productos.map((p, idx) => (
+            {productosFiltrados.map((p, idx) => (
               <div className="col-md-4 mb-4" key={idx}>
-                <div className="card h-100">
+                <div
+                  className="card h-100 cursor-pointer"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => agregarProducto(p)}
+                >
                   <img
                     src={p.imagen}
                     className="card-img-top"
@@ -50,25 +77,25 @@ const Venta = () => {
         <div className="col-md-4 border-start ps-4">
           <h5>Venta nueva</h5>
           <ul className="list-group mb-3">
-            <li className="list-group-item d-flex justify-content-between">
-              <div>
-                <strong>Hamburguesa con queso</strong>
-                <p className="mb-0 text-muted">A punto, Sin Cebolla, Beicon</p>
-              </div>
-              <span>$12.50</span>
-            </li>
-            <li className="list-group-item d-flex justify-content-between">
-              <div>
-                <strong>Papas fritas</strong>
-                <p className="mb-0 text-muted">Regular</p>
-              </div>
-              <span>$4.00</span>
-            </li>
+            {venta.map((p, i) => (
+              <li className="list-group-item d-flex justify-content-between" key={i}>
+                <div>
+                  <strong>{p.nombre}</strong>
+                  <p className="mb-0 text-muted">Fingido</p>
+                </div>
+                <span>${p.precio.toFixed(2)}</span>
+              </li>
+            ))}
+            {venta.length === 0 && (
+              <li className="list-group-item text-center text-muted">
+                No hay productos agregados
+              </li>
+            )}
           </ul>
 
           <div className="mb-2">
-            <p className="mb-1">Subtotal: <strong>$16.50</strong></p>
-            <p className="mb-1">Total: <strong>$16.50</strong></p>
+            <p className="mb-1">Subtotal: <strong>${subtotal.toFixed(2)}</strong></p>
+            <p className="mb-1">Total: <strong>${subtotal.toFixed(2)}</strong></p>
           </div>
 
           <div className="d-grid gap-2">
