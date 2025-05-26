@@ -12,6 +12,7 @@ import Inventario from "../pages/Inventario";
 import RegistroHoras from "../pages/RegistroHoras";
 import CambiosTurno from "../pages/CambiosTurno";
 import Venta from "../pages/Venta";
+import CrearDescuento from "../pages/crearDescuento";
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
           <NavLink className="nav-link" to="/registro-horas">Registro de Horas</NavLink>
           <NavLink className="nav-link" to="/cambios-turno">Cambios de Turno</NavLink>
           <NavLink className="nav-link" to="/venta">Venta</NavLink>
+          <NavLink className="nav-link" to="/crear-descuento">Crear Descuento</NavLink>
         </div>
       </nav>
 
@@ -44,6 +46,7 @@ const App = () => {
         <Route path="/registro-horas" element={<RegistroHoras />} />
         <Route path="/cambios-turno" element={<CambiosTurno />} />
         <Route path="/venta" element={<Venta />} />
+        <Route path="/crear-descuento" element={<CrearDescuento />} />
         {/* Ruta protegida */}
         <Route path="/dashboard" element={
           <PrivateRoute>

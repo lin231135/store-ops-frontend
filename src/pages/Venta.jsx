@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Venta.css";
 
 const productosBase = [
@@ -64,6 +64,71 @@ const Venta = () => {
     const precioFinal = p.precio * (1 - (p.descuento || 0));
     return sum + precioFinal * p.cantidad;
   }, 0);
+
+  const [descuentos, setDescuentos] = useState([
+    { nombre: "10% en hamburguesas", valor: 0.1 },
+    { nombre: "15% en sándwiches", valor: 0.15 }
+  ]);
+
+  const [showModalDescuentos, setShowModalDescuentos] = useState(false);
+  useEffect(() => {
+    if (showModalDescuentos) {
+      const descuentosGuardados = JSON.parse(localStorage.getItem("descuentos")) || [];
+      setDescuentos(descuentosGuardados);
+    }
+  }, [showModalDescuentos]);
+
+  const abrirCrearDescuento = () => {
+    window.location.href = "/crear-descuento"; 
+  };
+
+  const [selectedDescuentoIndex, setSelectedDescuentoIndex] = React.useState(null);
+
+  const modalDescuentos = (
+    <div className={`modal ${showModalDescuentos ? "d-block" : ""}`} tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Descuentos existentes</h5>
+            <button type="button" className="btn-close" onClick={() => setShowModalDescuentos(false)}></button>
+          </div>
+          <div className="modal-body">
+            <ul className="list-group">
+              {descuentos.map((d, i) => (
+                <li
+                  key={i}
+                  className={`list-group-item ${selectedDescuentoIndex === i ? "active" : ""}`}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setSelectedDescuentoIndex(i)}
+                >
+                  {d.nombre} - {(d.valor * 100).toFixed(0)}%
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="modal-footer">
+            <button className="btn btn-primary" onClick={abrirCrearDescuento}>
+              Crear descuento
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => {
+                if (selectedDescuentoIndex !== null) {
+                  aplicarDescuento(descuentos[selectedDescuentoIndex]);
+                  setShowModalDescuentos(false);
+                } else {
+                  alert("Selecciona un descuento primero");
+                }
+              }}
+            >
+              Aplicar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
 
   if (showPagoView) {
     return (
@@ -138,9 +203,9 @@ const Venta = () => {
             <button className="btn btn-primary">Bebidas</button>
             <button
               className="btn btn-outline-success"
-              onClick={() => alert("Aplica a productos con 10% o más de descuento.")}
+              onClick={() => setShowModalDescuentos(true)}
             >
-              10% de descuento
+              Aplicar descuento
             </button>
             <input
               type="text"
@@ -298,6 +363,7 @@ const Venta = () => {
           </div>
         </div>
       )}
+      {showModalDescuentos && modalDescuentos}
     </div>
   );
 };
