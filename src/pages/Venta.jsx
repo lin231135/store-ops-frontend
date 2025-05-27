@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import useDescuentos from "../hooks/useDescuentos";
 import "./Venta.css";
 
 const productosBase = [
@@ -20,6 +21,16 @@ const Venta = () => {
   const [showPagoView, setShowPagoView] = useState(false);
   const [nota, setNota] = useState("");
   const [mostrarRecibo, setMostrarRecibo] = useState(false);
+  const [selectedDescuentoIndex, setSelectedDescuentoIndex] = useState(null);
+  const [showModalDescuentos, setShowModalDescuentos] = useState(false);
+
+  const {
+    descuentos,
+    descuentoAplicado,
+    error,
+    aplicarDescuento,
+    setError
+  } = useDescuentos();
 
   const productosFiltrados = productosBase.filter((p) =>
     p.nombre.toLowerCase().includes(busqueda.toLowerCase())
@@ -61,11 +72,12 @@ const Venta = () => {
   };
 
   const subtotal = venta.reduce((sum, p) => {
-    const precioFinal = p.precio * (1 - (p.descuento || 0));
+    const descuento = p.descuento || 0;
+    const precioFinal = p.precio * (1 - descuento);
     return sum + precioFinal * p.cantidad;
   }, 0);
 
-  const [descuentos, setDescuentos] = useState([
+  /*const [descuentos, setDescuentos] = useState([
     { nombre: "10% en hamburguesas", valor: 0.1 },
     { nombre: "15% en sándwiches", valor: 0.15 }
   ]);
@@ -76,14 +88,39 @@ const Venta = () => {
       const descuentosGuardados = JSON.parse(localStorage.getItem("descuentos")) || [];
       setDescuentos(descuentosGuardados);
     }
-  }, [showModalDescuentos]);
+  }, [showModalDescuentos]);*/
 
   const abrirCrearDescuento = () => {
     window.location.href = "/crear-descuento"; 
   };
 
-  const [selectedDescuentoIndex, setSelectedDescuentoIndex] = React.useState(null);
-
+  const handleAplicarDescuento = () => {
+    if (selectedDescuentoIndex === null) {
+      setError("Selecciona un descuento primero");
+      return;
+    }
+    
+    const descuentoSeleccionado = descuentos[selectedDescuentoIndex];
+    const nuevosProductos = aplicarDescuento(
+      descuentoSeleccionado,
+      productosBase,
+      subtotal
+    );
+    
+    if (nuevosProductos) {
+      setVenta(prev => 
+        prev.map(item => {
+          const productoActualizado = nuevosProductos.find(p => p.nombre === item.nombre);
+          return productoActualizado ? { ...item, ...productoActualizado } : item;
+        })
+      );
+      setShowModalDescuentos(false);
+      setSelectedDescuentoIndex(null);
+    }
+  };
+  //const [selectedDescuentoIndex, setSelectedDescuentoIndex] = React.useState(null);
+  
+  
   const modalDescuentos = (
     <div className={`modal ${showModalDescuentos ? "d-block" : ""}`} tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
       <div className="modal-dialog">
@@ -93,6 +130,7 @@ const Venta = () => {
             <button type="button" className="btn-close" onClick={() => setShowModalDescuentos(false)}></button>
           </div>
           <div className="modal-body">
+            {error && <div className="alert alert-danger">{error}</div>}
             <ul className="list-group">
               {descuentos.map((d, i) => (
                 <li
@@ -101,7 +139,7 @@ const Venta = () => {
                   style={{ cursor: "pointer" }}
                   onClick={() => setSelectedDescuentoIndex(i)}
                 >
-                  {d.nombre} - {(d.valor * 100).toFixed(0)}%
+                  {d.nombre} - {(d.valor * 100).toFixed(0)}% (Mínimo Q{d.montoMinimo})
                 </li>
               ))}
             </ul>
@@ -112,14 +150,7 @@ const Venta = () => {
             </button>
             <button
               className="btn btn-secondary"
-              onClick={() => {
-                if (selectedDescuentoIndex !== null) {
-                  aplicarDescuento(descuentos[selectedDescuentoIndex]);
-                  setShowModalDescuentos(false);
-                } else {
-                  alert("Selecciona un descuento primero");
-                }
-              }}
+              onClick={handleAplicarDescuento}
             >
               Aplicar
             </button>
@@ -128,7 +159,6 @@ const Venta = () => {
       </div>
     </div>
   );
-
 
   if (showPagoView) {
     return (
@@ -342,14 +372,28 @@ const Venta = () => {
               <div className="modal-body">
                 <p><strong>Gracias por tu compra</strong></p>
                 <ul className="list-group mb-2">
-                  {venta.map((p, i) => (
-                    <li className="list-group-item d-flex justify-content-between" key={i}>
-                      <span>{p.nombre} x{p.cantidad}</span>
-                      <span>
-                        ${((p.precio * (1 - (p.descuento || 0))) * p.cantidad).toFixed(2)}
-                      </span>
+                  {venta.map((producto, index) => (
+                    <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                        <strong>{producto.nombre}</strong>
+                        <div className="text-muted">
+                          {producto.descuento
+                            ? <>
+                                <span className="text-decoration-line-through">Q{producto.precio.toFixed(2)}</span>
+                                {" "}Q{(producto.precio * (1 - producto.descuento)).toFixed(2)}
+                              </>
+                            : <>Q{producto.precio.toFixed(2)}</>
+                          } x {producto.cantidad}
+                        </div>
+                      </div>
+                      <div>
+                        <button onClick={() => aumentar(index)}>+</button>
+                        <button onClick={() => disminuir(index)}>-</button>
+                        <button onClick={() => eliminar(index)}>🗑️</button>
+                      </div>
                     </li>
                   ))}
+
                 </ul>
                 <p className="text-end">Total: <strong>${subtotal.toFixed(2)}</strong></p>
                 {nota && (
