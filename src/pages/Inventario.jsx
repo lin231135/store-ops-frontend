@@ -2,10 +2,12 @@ import { useState } from 'react'
 
 import './Inventario.css'
 import { Pencil, Trash } from "lucide-react";
-
+import AlertasStock from './AlertasStock';
+import ConfiguracionStock from './ConfiguracionStock';
+import { useStockConfig } from './useStockConfig';
 
 //DATOS DE PRUEVA
-const allProducts = [
+const initialProducts = [
   {
     name: "Pan de hamburguesa",
     category: "Panadería",
@@ -96,6 +98,18 @@ function Inventario() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const {
+    stockMinimo,
+    setStockMinimo,
+    mostrarAlertas,
+    setMostrarAlertas,
+    getStockBadgeClass,
+    contarProductosPorEstado
+  } = useStockConfig();
+
+  const estadisticas = contarProductosPorEstado(products);
+
   const itemsPerPage = 5;
 
   const categories = ["All", ...new Set(products.map(p => p.category))];
@@ -137,6 +151,18 @@ function Inventario() {
   return (
     <div className="container my-4">
       <h2 className="mb-4 text-primary fw-bold">Inventario</h2>
+
+      {mostrarAlertas && (
+        <AlertasStock products={products} stockMinimo={stockMinimo} />
+      )}
+
+      <ConfiguracionStock
+        stockMinimo={stockMinimo}
+        setStockMinimo={setStockMinimo}
+        mostrarAlertas={mostrarAlertas}
+        setMostrarAlertas={setMostrarAlertas}
+        estadisticas={estadisticas}
+      />
 
       <div className="row g-3 mb-4">
         <div className="col-sm-6 col-md-4">
@@ -191,7 +217,7 @@ function Inventario() {
                 </td>
                 <td className="fw-bold text-success">{product.price}</td>
                 <td>
-                  <span className={`badge ${product.quantity < 30 ? 'bg-warning' : 'bg-success'}`}>
+                  <span className={`badge ${getStockBadgeClass(product.quantity)}`}>
                     {product.quantity}
                   </span>
                 </td>
