@@ -3,6 +3,7 @@ import useDescuentos from "../hooks/useDescuentos";
 import "./Venta.css";
 import ManualCardInputModal from "../components/ManualCardInputModal"
 import CashPaymentModal from "../components/CashPaymentModal"
+import GiftCardModal from "../components/GiftCardModal"
 
 const productosBase = [
   { nombre: "La clásica", precio: 10.0, imagen: "https://media.istockphoto.com/id/520410807/es/foto/hamburguesa-con-queso.jpg?s=612x612&w=0&k=20&c=YDYCsfNMOHATJlvcswo7mjebVeLOtctrQeUPJGlR3jc=" },
@@ -27,6 +28,8 @@ const Venta = () => {
   const [showModalDescuentos, setShowModalDescuentos] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
   const [showCashModal, setShowCashModal] = useState(false);
+  const [showGiftModal, setShowGiftModal] = useState(false);
+  const [giftCardApplied, setGiftCardApplied] = useState(0);
 
   const {
     descuentos,
@@ -77,7 +80,7 @@ const Venta = () => {
   const subtotal = venta.reduce((sum, p) => {
     const descuento = p.descuento || 0;
     const precioFinal = p.precio * (1 - descuento);
-    return sum + precioFinal * p.cantidad;
+    return (sum + precioFinal * p.cantidad) - giftCardApplied;
   }, 0);
 
   /*const [descuentos, setDescuentos] = useState([
@@ -188,7 +191,10 @@ const Venta = () => {
             <span><i className="bi bi-credit-card me-2"></i>Tarjeta guardada</span>
             <i className="bi bi-chevron-right"></i>
           </li>
-          <li className="list-group-item d-flex justify-content-between align-items-center">
+          <li className="list-group-item d-flex justify-content-between align-items-center"
+            onClick={() => setShowGiftModal(true)}
+            style={{ cursor: "pointer" }}
+          >
             <span><i className="bi bi-gift me-2"></i>Tarjeta de regalo</span>
             <i className="bi bi-chevron-right"></i>
           </li>
@@ -203,6 +209,12 @@ const Venta = () => {
         </ul>
 
         <CashPaymentModal show={showCashModal} onClose={() => setShowCashModal(false)} subtotal={subtotal} />
+        <GiftCardModal show={showGiftModal} onClose={() => setShowGiftModal(false)} subtotal={subtotal}
+          onApplyGift={(monto) => {
+            setGiftCardApplied(prev => prev + monto);
+            console.log("Aplicado desde tarjeta de regalo:", monto);
+          }}
+        />
         <ManualCardInputModal show={showCardModal} onClose={() => setShowCardModal(false)} />
 
         <div className="mt-4 text-center">
