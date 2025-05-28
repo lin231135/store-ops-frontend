@@ -90,39 +90,67 @@ const allProducts = [
 
 
 function Inventario() {
+  const [products, setProducts] = useState(initialProducts);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const itemsPerPage = 5;
 
-  const categories = ["All", ...new Set(allProducts.map(p => p.category))];
+  const categories = ["All", ...new Set(products.map(p => p.category))];
 
-  const filtered = allProducts.filter(product => {
+  const filtered = products.filter(product => {
     const matchName = product.name.toLowerCase().includes(search.toLowerCase());
     const matchCategory = category === "All" || product.category === category;
     return matchName && matchCategory;
   });
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
-  const products = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const currentProducts = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handleEditClick = (product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveProduct = (updatedProduct) => {
+    setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p));
+  };
+
+  const handleDeleteClick = (productId) => {
+    if (window.confirm('¿Está seguro de que desea eliminar este producto?')) {
+      setProducts(products.filter(p => p.id !== productId));
+      // Ajustar página si es necesario
+      const newFiltered = products.filter(p => p.id !== productId).filter(product => {
+        const matchName = product.name.toLowerCase().includes(search.toLowerCase());
+        const matchCategory = category === "All" || product.category === category;
+        return matchName && matchCategory;
+      });
+      const newTotalPages = Math.ceil(newFiltered.length / itemsPerPage);
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+      }
+    }
+  };
 
   return (
     <div className="container my-4">
-      <h2 className="mb-4">Inventario</h2>
+      <h2 className="mb-4 text-primary fw-bold">Inventario</h2>
 
       <div className="row g-3 mb-4">
         <div className="col-sm-6 col-md-4">
           <input
             type="text"
-            className="form-control"
-            placeholder="Buscar producto..."
+            className="form-control border-2"
+            placeholder="🔍 Buscar producto..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <div className="col-sm-6 col-md-4">
           <select
-            className="form-select"
+            className="form-select border-2"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
@@ -133,46 +161,71 @@ function Inventario() {
         </div>
       </div>
 
-      <div className="table-responsive">
-        <table className="table table-bordered table-hover align-middle">
-          <thead className="table-light">
+      <div className="table-responsive shadow-sm rounded-3 overflow-hidden">
+        <table className="table table-hover align-middle mb-0">
+          <thead className="table-primary">
             <tr>
-              <th>Imagen</th>
-              <th>Nombre del Producto</th>
-              <th>Categoría</th>
-              <th>Precio</th>
-              <th>Cantidad</th>
-              <th>Colores</th>
-              <th>Acciones</th>
+              <th className="fw-bold">Imagen</th>
+              <th className="fw-bold">Nombre del Producto</th>
+              <th className="fw-bold">Categoría</th>
+              <th className="fw-bold">Precio</th>
+              <th className="fw-bold">Cantidad</th>
+              <th className="fw-bold">Colores</th>
+              <th className="fw-bold text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {products.map((product, idx) => (
-              <tr key={idx}>
+            {currentProducts.map((product, idx) => (
+              <tr key={product.id} className="border-bottom">
                 <td>
-                  <img src={product.image} alt={product.name} className="img-fluid" style={{ height: "56px" }} />
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="img-fluid rounded-2 shadow-sm"
+                    style={{ height: "56px", width: "56px", objectFit: "cover" }}
+                  />
                 </td>
-                <td>{product.name}</td>
-                <td>{product.category}</td>
-                <td>{product.price}</td>
-                <td>{product.quantity}</td>
+                <td className="fw-medium">{product.name}</td>
+                <td>
+                  <span className="badge bg-light text-dark border">{product.category}</span>
+                </td>
+                <td className="fw-bold text-success">{product.price}</td>
+                <td>
+                  <span className={`badge ${product.quantity < 30 ? 'bg-warning' : 'bg-success'}`}>
+                    {product.quantity}
+                  </span>
+                </td>
                 <td>
                   <div className="d-flex gap-1">
                     {product.colors.map((color, i) => (
                       <span
                         key={i}
-                        className="rounded-circle border"
-                        style={{ backgroundColor: color, width: "20px", height: "20px", display: "inline-block" }}
+                        className="rounded-circle border shadow-sm"
+                        style={{
+                          backgroundColor: color,
+                          width: "24px",
+                          height: "24px",
+                          display: "inline-block"
+                        }}
+                        title={color}
                       ></span>
                     ))}
                   </div>
                 </td>
                 <td>
-                  <div className="d-flex gap-2">
-                    <button className="btn btn-outline-secondary btn-sm">
+                  <div className="d-flex gap-2 justify-content-center">
+                    <button
+                      className="btn btn-outline-primary btn-sm rounded-2"
+                      onClick={() => handleEditClick(product)}
+                      title="Editar producto"
+                    >
                       <Pencil size={16} />
                     </button>
-                    <button className="btn btn-outline-danger btn-sm">
+                    <button
+                      className="btn btn-outline-danger btn-sm rounded-2"
+                      onClick={() => handleDeleteClick(product.id)}
+                      title="Eliminar producto"
+                    >
                       <Trash size={16} />
                     </button>
                   </div>
@@ -183,28 +236,38 @@ function Inventario() {
         </table>
       </div>
 
-      <div className="d-flex justify-content-between align-items-center mt-3">
-        <span className="text-muted small">
+      <div className="d-flex justify-content-between align-items-center mt-4">
+        <span className="text-muted">
           Mostrando {itemsPerPage * (currentPage - 1) + 1}-
-          {Math.min(itemsPerPage * currentPage, filtered.length)} de {filtered.length}
+          {Math.min(itemsPerPage * currentPage, filtered.length)} de {filtered.length} productos
         </span>
         <div className="btn-group">
           <button
-            className="btn btn-outline-primary btn-sm"
+            className="btn btn-outline-primary"
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(currentPage - 1)}
           >
-            &lt;
+            ← Anterior
           </button>
+          <span className="btn btn-light disabled">
+            {currentPage} de {totalPages}
+          </span>
           <button
-            className="btn btn-outline-primary btn-sm"
+            className="btn btn-outline-primary"
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(currentPage + 1)}
           >
-            &gt;
+            Siguiente →
           </button>
         </div>
       </div>
+
+      <EditProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={selectedProduct}
+        onSave={handleSaveProduct}
+      />
     </div>
   );
 }
