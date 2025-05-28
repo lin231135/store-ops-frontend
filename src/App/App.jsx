@@ -13,6 +13,7 @@ import RegistroHoras from "../pages/RegistroHoras";
 import CambiosTurno from "../pages/CambiosTurno";
 import Venta from "../pages/Venta";
 import CrearDescuento from "../pages/crearDescuento";
+import logo from '/Logo.svg';
 
 const App = () => {
   const { auth, logout } = useAuth(); // 👈 auth para saber si está logueado
@@ -20,8 +21,10 @@ const App = () => {
   return (
     <Router>
       {/* Menú de navegación */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-light px-4">
-        <NavLink className="navbar-brand" to="/">Mi App</NavLink>
+      <nav className="navbar navbar-expand-lg navbar-light bg-light px-4" color="gray">
+        <NavLink className="navbar-brand" to="/">
+          <img src="/Logo.svg" height="75" alt="Logo" className="me-2" />
+        </NavLink>
         <div className="navbar-nav">
           {!auth && <NavLink className="nav-link" to="/login">Login</NavLink>}
 
