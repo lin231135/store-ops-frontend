@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useDescuentos from "../hooks/useDescuentos";
 import "./Venta.css";
+import ManualCardInputModal from "../components/ManualCardInputModal"
 
 const productosBase = [
   { nombre: "La clásica", precio: 10.0, imagen: "https://media.istockphoto.com/id/520410807/es/foto/hamburguesa-con-queso.jpg?s=612x612&w=0&k=20&c=YDYCsfNMOHATJlvcswo7mjebVeLOtctrQeUPJGlR3jc=" },
@@ -23,6 +24,7 @@ const Venta = () => {
   const [mostrarRecibo, setMostrarRecibo] = useState(false);
   const [selectedDescuentoIndex, setSelectedDescuentoIndex] = useState(null);
   const [showModalDescuentos, setShowModalDescuentos] = useState(false);
+  const [showCardModal, setShowCardModal] = useState(false);
 
   const {
     descuentos,
@@ -91,7 +93,7 @@ const Venta = () => {
   }, [showModalDescuentos]);*/
 
   const abrirCrearDescuento = () => {
-    window.location.href = "/crear-descuento"; 
+    window.location.href = "/crear-descuento";
   };
 
   const handleAplicarDescuento = () => {
@@ -99,16 +101,16 @@ const Venta = () => {
       setError("Selecciona un descuento primero");
       return;
     }
-    
+
     const descuentoSeleccionado = descuentos[selectedDescuentoIndex];
     const nuevosProductos = aplicarDescuento(
       descuentoSeleccionado,
       productosBase,
       subtotal
     );
-    
+
     if (nuevosProductos) {
-      setVenta(prev => 
+      setVenta(prev =>
         prev.map(item => {
           const productoActualizado = nuevosProductos.find(p => p.nombre === item.nombre);
           return productoActualizado ? { ...item, ...productoActualizado } : item;
@@ -119,8 +121,8 @@ const Venta = () => {
     }
   };
   //const [selectedDescuentoIndex, setSelectedDescuentoIndex] = React.useState(null);
-  
-  
+
+
   const modalDescuentos = (
     <div className={`modal ${showModalDescuentos ? "d-block" : ""}`} tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
       <div className="modal-dialog">
@@ -186,11 +188,17 @@ const Venta = () => {
             <span><i className="bi bi-gift me-2"></i>Tarjeta de regalo</span>
             <i className="bi bi-chevron-right"></i>
           </li>
-          <li className="list-group-item d-flex justify-content-between align-items-center">
+          <li
+            className="list-group-item d-flex justify-content-between align-items-center"
+            onClick={() => setShowCardModal(true)}
+            style={{ cursor: "pointer" }}
+          >
             <span><i className="bi bi-input-cursor-text me-2"></i>Ingreso manual de tarjeta</span>
             <i className="bi bi-chevron-right"></i>
           </li>
         </ul>
+
+        <ManualCardInputModal show={showCardModal} onClose={() => setShowCardModal(false)} />
 
         <div className="mt-4 text-center">
           <a href="#" onClick={(e) => { e.preventDefault(); alert("Funcionalidad no implementada aún."); }}>
@@ -379,9 +387,9 @@ const Venta = () => {
                         <div className="text-muted">
                           {producto.descuento
                             ? <>
-                                <span className="text-decoration-line-through">Q{producto.precio.toFixed(2)}</span>
-                                {" "}Q{(producto.precio * (1 - producto.descuento)).toFixed(2)}
-                              </>
+                              <span className="text-decoration-line-through">Q{producto.precio.toFixed(2)}</span>
+                              {" "}Q{(producto.precio * (1 - producto.descuento)).toFixed(2)}
+                            </>
                             : <>Q{producto.precio.toFixed(2)}</>
                           } x {producto.cantidad}
                         </div>
