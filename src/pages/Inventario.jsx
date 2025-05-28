@@ -1,10 +1,14 @@
 import { useState } from 'react'
-
 import './Inventario.css'
 import { Pencil, Trash } from "lucide-react";
 import AlertasStock from './AlertasStock';
 import ConfiguracionStock from './ConfiguracionStock';
 import { useStockConfig } from './useStockConfig';
+import AlertasExpiracion from './AlertasExpiracion';
+import ConfiguracionExpiracion from './ConfiguracionExpiracion';
+import { useExpiration } from '../hooks/useExpiration';
+import { dateUtils } from '../utils/dateUtils';
+import { EditProductModal } from '../components/EditProductModal'
 
 //DATOS DE PRUEVA
 const initialProducts = [
@@ -14,7 +18,8 @@ const initialProducts = [
     image: "https://th.bing.com/th/id/R.1389c38c6f6073d683f77bf96b3e6c5b?rik=AvGGzYahDXS7JA&riu=http%3a%2f%2fwww.panaderiasjulia.es%2farchivos%2fimage%2ftienda_productos%2fmedias%2f22-118-comprarpanaderiapan-de-hamburguesa.jpg&ehk=ONuGcAoxXYOfBlpr1OqhrvdCO2WKWSwBaQQTli9mNQ4%3d&risl=&pid=ImgRaw&r=0",
     price: "Q0.50",
     quantity: 120,
-    colors: ["#deb887", "#d2b48c"]
+    colors: ["#deb887", "#d2b48c"],
+    expirationDate: "2025-06-10"
   },
   {
     name: "Carne de res (150g)",
@@ -22,7 +27,8 @@ const initialProducts = [
     image: "https://medias.treew.com/imgproducts/middle/169397.jpg",
     price: "Q5.00",
     quantity: 80,
-    colors: ["#8b0000", "#a52a2a"]
+    colors: ["#8b0000", "#a52a2a"],
+    expirationDate: "2025-06-20"
   },
   {
     name: "Queso cheddar",
@@ -30,7 +36,8 @@ const initialProducts = [
     image: "https://lacasadelqueso.com.ar/wp-content/uploads/2017/07/queso-cheddar-color-intenso.jpg",
     price: "Q1.00",
     quantity: 60,
-    colors: ["#ffcc00", "#ffb300"]
+    colors: ["#ffcc00", "#ffb300"],
+    expirationDate: "2025-07-10"
   },
   {
     name: "Lechuga romana",
@@ -38,7 +45,8 @@ const initialProducts = [
     image: "https://huerto-en-casa.com/wp-content/uploads/2021/09/lechuga-romana.jpg",
     price: "Q0.75",
     quantity: 40,
-    colors: ["#228b22", "#7cfc00"]
+    colors: ["#228b22", "#7cfc00"],
+    expirationDate: "2025-06-15"
   },
   {
     name: "Tomate",
@@ -46,7 +54,8 @@ const initialProducts = [
     image: "https://th.bing.com/th/id/OIP.tLf9JumLo06aAkzvo6194AHaHG?rs=1&pid=ImgDetMain",
     price: "Q0.90",
     quantity: 50,
-    colors: ["#ff6347", "#e32636"]
+    colors: ["#ff6347", "#e32636"],
+    expirationDate: "2025-06-05"
   },
   {
     name: "Cebolla morada",
@@ -54,7 +63,8 @@ const initialProducts = [
     image: "https://frutasyverduras.info/wp-content/uploads/2019/06/cebolla-morada-1024x711.jpg",
     price: "Q0.60",
     quantity: 30,
-    colors: ["#800080", "#9932cc"]
+    colors: ["#800080", "#9932cc"],
+    expirationDate: "2025-07-12"
   },
   {
     name: "Papas fritas congeladas",
@@ -62,7 +72,8 @@ const initialProducts = [
     image: "https://www.paulinacocina.net/wp-content/uploads/2017/10/frenchfries.jpg",
     price: "Q3.50",
     quantity: 100,
-    colors: ["#f4a460", "#daa520"]
+    colors: ["#f4a460", "#daa520"],
+    expirationDate: "2025-07-10"
   },
   {
     name: "Refresco cola (355ml)",
@@ -70,7 +81,8 @@ const initialProducts = [
     image: "https://images-na.ssl-images-amazon.com/images/I/81mEIp4PMBL._SL1500_.jpg",
     price: "Q2.00",
     quantity: 200,
-    colors: ["#3b2f2f", "#8b4513"]
+    colors: ["#3b2f2f", "#8b4513"],
+    expirationDate: "2025-07-25"
   },
   {
     name: "Salsa kétchup",
@@ -78,7 +90,8 @@ const initialProducts = [
     image: "https://th.bing.com/th/id/OIP.94MFGcImEKzXhL3gBQLK6QHaHa?rs=1&pid=ImgDetMain",
     price: "Q2.50",
     quantity: 20,
-    colors: ["#b22222", "#dc143c"]
+    colors: ["#b22222", "#dc143c"],
+    expirationDate: "2025-07-01"
   },
   {
     name: "Mostaza",
@@ -86,7 +99,8 @@ const initialProducts = [
     image: "https://i5-mx.walmartimages.com/gr/images/product-images/img_large/00750100330580L.jpg",
     price: "Q2.50",
     quantity: 20,
-    colors: ["#ffd700", "#ffea00"]
+    colors: ["#ffd700", "#ffea00"],
+    expirationDate: "2025-06-09"
   }
 ];
 
@@ -107,6 +121,16 @@ function Inventario() {
     getStockBadgeClass,
     contarProductosPorEstado
   } = useStockConfig();
+
+  const {
+    diasAlerta,
+    setDiasAlerta,
+    mostrarVencidos,
+    setMostrarVencidos,
+    estadisticasExpiracion,
+    productosVencidos,
+    productosPorVencer
+  } = useExpiration(products);
 
   const estadisticas = contarProductosPorEstado(products);
 
@@ -156,12 +180,28 @@ function Inventario() {
         <AlertasStock products={products} stockMinimo={stockMinimo} />
       )}
 
+      {mostrarVencidos && (
+        <AlertasExpiracion
+          productosVencidos={productosVencidos}
+          productosPorVencer={productosPorVencer}
+          diasAlerta={diasAlerta}
+        />
+      )}
+
       <ConfiguracionStock
         stockMinimo={stockMinimo}
         setStockMinimo={setStockMinimo}
         mostrarAlertas={mostrarAlertas}
         setMostrarAlertas={setMostrarAlertas}
         estadisticas={estadisticas}
+      />
+
+      <ConfiguracionExpiracion
+        diasAlerta={diasAlerta}
+        setDiasAlerta={setDiasAlerta}
+        mostrarVencidos={mostrarVencidos}
+        setMostrarVencidos={setMostrarVencidos}
+        estadisticas={estadisticasExpiracion}
       />
 
       <div className="row g-3 mb-4">
@@ -197,6 +237,7 @@ function Inventario() {
               <th className="fw-bold">Precio</th>
               <th className="fw-bold">Cantidad</th>
               <th className="fw-bold">Colores</th>
+              <th className="fw-bold">Expiración</th>
               <th className="fw-bold text-center">Acciones</th>
             </tr>
           </thead>
@@ -255,6 +296,21 @@ function Inventario() {
                       <Trash size={16} />
                     </button>
                   </div>
+                </td>
+                <td>
+                  {product.expirationDate ? (
+                    <div>
+                      <span className={`badge ${dateUtils.getExpirationBadgeClass(product.expirationDate, diasAlerta)}`}>
+                        {dateUtils.formatDate(product.expirationDate)}
+                      </span>
+                      <br />
+                      <small className="text-muted">
+                        {dateUtils.getExpirationText(product.expirationDate, diasAlerta)}
+                      </small>
+                    </div>
+                  ) : (
+                    <span className="badge bg-secondary">Sin fecha</span>
+                  )}
                 </td>
               </tr>
             ))}

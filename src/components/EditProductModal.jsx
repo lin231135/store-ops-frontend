@@ -210,6 +210,16 @@ function EditProductModal({ isOpen, onClose, product, onSave }) {
                         </div>
                     </div>
 
+                    <div className="col-md-6 mb-3">
+                        <label className="form-label fw-medium">Fecha de Expiración</label>
+                        <input
+                            type="date"
+                            className="form-control"
+                            value={dateUtils.toInputDate(formData.expirationDate)}
+                            onChange={(e) => setFormData({ ...formData, expirationDate: e.target.value })}
+                        />
+                    </div>
+
                     <div className="d-flex gap-2">
                         <button
                             type="button"
